@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0">
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+
+  <script>
+    const NR_CIRCLES = 150;
+
+    const update = (circles, selection) => {
+      const gamepads = navigator.getGamepads();
+
+      //console.dir(gamepads);
+
+      if (gamepads.length > 0) {
+        const gamepad = gamepads[0];
+
+        const firstButton = gamepad.buttons[0];
+
+        const xAxisValue = gamepad.axes[0];
+        const yAxisValue = gamepad.axes[1];
+
+        for (let i = 0; i < NR_CIRCLES; i++) {
+          const circle = circles[i];
+
+          if (firstButton.pressed) {
+            circle.fill = "blue";
+          } else {
+            circle.fill = "red";
+          }
+
+          if (xAxisValue > 0.5) {
+            circle.x -= circle.vx;
+          } else if (xAxisValue < -0.5) {
+            circle.x += circle.vx;
+          }
+
+          if (yAxisValue > 0.5) {
+            circle.y -= circle.vy;
+          } else if (yAxisValue < -0.5) {
+            circle.y += circle.vy;
+          }
+        }
+
+        selection
+          .attr("cx", (d) => {return d.x;})
+          .attr("cy", (d) => {return d.y;})
+          .style("fill", (d) => {return d.fill;});
+      }
+
+      requestAnimationFrame(() => {
+        update(circles, selection);
+      });
+    };
+
+    const start = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      const circles = [];
+
+      for (let i = 0; i < NR_CIRCLES; i++) {
+        circles.push({
+          x: width * Math.random(),
+          y: height * Math.random(),
+          radius: 15,
+          fill: "red",
+          stroke: "black",
+          strokeWidth: 1,
+          vx: 2,
+          vy: 2
+        });
+      }
+
+      const svg = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+      const selection = svg.selectAll("circle")
+        .data(circles)
+        .enter()
+        .append("circle")
+        .attr("r", (d) => {return d.radius;})
+        .attr("cx", (d) => {return d.x;})
+        .attr("cy", (d) => {return d.y;})
+        .style("fill", (d) => {return d.fill;})
+        .style("stroke", (d) => {return d.stroke;})
+        .style("stroke-width", (d) => {return d.strokeWidth;});
+
+      requestAnimationFrame(() => {
+        update(circles, selection);
+      });
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      start();
+    }, false);
+  </script>
+</body>
+</html>
