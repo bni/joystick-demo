@@ -9,9 +9,7 @@
     const update = (circles, selection) => {
       const gamepads = navigator.getGamepads();
 
-      //console.dir(gamepads);
-
-      if (gamepads.length > 0) {
+      if (gamepads.length > 0 && gamepads[0]) {
         const gamepad = gamepads[0];
 
         const firstButton = gamepad.buttons[0];
@@ -28,16 +26,16 @@
             circle.fill = "red";
           }
 
-          if (xAxisValue > 0.5) {
-            circle.x -= circle.vx;
-          } else if (xAxisValue < -0.5) {
-            circle.x += circle.vx;
+          if (xAxisValue > 0.1) {
+            circle.x -= circle.vx * Math.abs(xAxisValue);
+          } else if (xAxisValue < -0.1) {
+            circle.x += circle.vx * Math.abs(xAxisValue);
           }
 
-          if (yAxisValue > 0.5) {
-            circle.y -= circle.vy;
-          } else if (yAxisValue < -0.5) {
-            circle.y += circle.vy;
+          if (yAxisValue > 0.1) {
+            circle.y -= circle.vy * Math.abs(yAxisValue);
+          } else if (yAxisValue < -0.1) {
+            circle.y += circle.vy * Math.abs(yAxisValue);
           }
         }
 
@@ -66,8 +64,8 @@
           fill: "red",
           stroke: "black",
           strokeWidth: 1,
-          vx: 2,
-          vy: 2
+          vx: 10,
+          vy: 10
         });
       }
 
